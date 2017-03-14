@@ -9,5 +9,6 @@
 #include <iostream>
 #include <iomanip>
 #include <algorithm>
+#include <stack>
 
 #endif //__PCH_H__

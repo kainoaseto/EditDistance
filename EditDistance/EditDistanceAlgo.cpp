@@ -48,55 +48,48 @@ void EditDistanceAlgo::PrintResults(bool table)
     }
 
 	int currentPos = _table[_initial.size()][_final.size()];
-	_e_map = "", _e_initial = "", _e_final = "";
-
+	
 	for (int i = _initial.size(); i > 0; )
 	{
-		for (int j = _final.size(); j > 0; )
+		for (int j = _final.size(); j > 0 && i > 0; )
 		{
-			std::cout << "DEBUG: " << currentPos << std::endl;;
 			// Check if an insert was the best path
 			if (currentPos > _table[i][j - 1])
 			{
 				currentPos = _table[i][j - 1];
-				_e_initial += " ";
-				_e_map += "i";
-				_e_final += _final[_final.size()-j];
+				update_edits(' ', 'i', _final[j-1]);
 				j--;
 			}
 			// Check if a delete was the best path
 			else if (currentPos > _table[i - 1][j])
 			{
 				currentPos = _table[i - 1][j];
-				_e_initial += _initial[_initial.size()- i];
-				_e_map += "d";
-				_e_final += " ";
+				update_edits(_initial[i-1], 'd', ' ');
 				i--;
 			}
 			// Check if a replace was the best choice
 			else
 			{
 				if (currentPos == _table[i - 1][j - 1])
-				{
-					_e_map += " ";
-				}
+					_e_map.push(' ');
 				else
-				{
-					_e_map += "r";	
-				}
+					_e_map.push('r');	
+
 				currentPos = _table[i - 1][j - 1];
-				_e_initial += _initial[_initial.size() - i];
-				_e_final += _final[_final.size() - j];
+				_e_initial.push(_initial[i-1]);
+				_e_final.push(_final[j-1]);
 				i--, j--;
 				
 			}
-			
 		}
 	}
 
-	std::cout << "From: " << _e_initial << std::endl;
-	std::cout << " map: " << _e_map << std::endl;
-	std::cout << "  To: " << _e_final << std::endl;
+	std::cout << "From: ";
+	stack_print(_e_initial);
+	std::cout << " map: ";
+	stack_print(_e_map);
+	std::cout << "  To: ";
+	stack_print(_e_final);
 
 	
 }
@@ -141,4 +134,21 @@ void EditDistanceAlgo::Run()
 int EditDistanceAlgo::min(int x, int y, int z)
 {
     return std::min(std::min(x, y), z);
+}
+
+void EditDistanceAlgo::update_edits(char cinitial, char cmap, char cfinal)
+{
+	_e_initial.push(cinitial);
+	_e_map.push(cmap);
+	_e_final.push(cfinal);
+}
+
+void EditDistanceAlgo::stack_print(std::stack<char> cstack)
+{
+	while (!cstack.empty())
+	{
+		std::cout << cstack.top();
+		cstack.pop();
+	}
+	std::cout << std::endl;
 }
