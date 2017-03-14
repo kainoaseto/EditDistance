@@ -20,7 +20,7 @@ public:
 private:
 	void update_edits(char cinitial, char cmap, char cfinal);
 	void stack_print(std::stack<char> cstack);
-    // Utility triple comparison min
+    // Utility triple min comparison
     int min(int x, int y, int z);
 
     std::string _initial;

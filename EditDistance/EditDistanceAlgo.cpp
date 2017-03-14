@@ -21,7 +21,9 @@ void EditDistanceAlgo::PrintResults(bool table)
         int offset = static_cast<int>(std::to_string(_initial.size()).size());
 
 		/*
-			Prints out the formatted table
+			Prints out the top three columns of the formatted table which is
+			the number of columns, then the letters in the string and a 
+			horizontal seperation line.
 		*/
         for(int i = 0; i < 3; i++)
         {
@@ -38,7 +40,8 @@ void EditDistanceAlgo::PrintResults(bool table)
 			if(i < 3)
 				std::cout << std::endl;
         }
-
+		
+		// Prints out the table with the left row identifiers with a seperation line.
         for(int i = 0; i <= _initial.size(); i++)
         {
 			if( i != 0)
@@ -53,41 +56,52 @@ void EditDistanceAlgo::PrintResults(bool table)
 		std::cout << std::endl;
     }
 
+	// Initialize current position to the bottom right of the grid
 	int currentPos = _table[_initial.size()][_final.size()];
 	
-	for (int i = _initial.size(); i > 0; )
+	for (int i = _initial.size(), j = _final.size(); j > 0 || i > 0; )
 	{
-		for (int j = _final.size(); j > 0 && i > 0; )
+		/*
+			Our first choice is always to replace out of the three options
+			so this is at the top. As long as we can go diagnol and the
+			operation is less than our current we can do a replace.
+		*/
+		if ((i > 0 && j > 0) && (currentPos > _table[i - 1][j - 1]))
 		{
-			// Check if an insert was the best path
-			if (currentPos > _table[i][j - 1])
-			{
-				currentPos = _table[i][j - 1];
-				update_edits(' ', 'i', _final[j-1]);
-				j--;
-			}
-			// Check if a delete was the best path
-			else if (currentPos > _table[i - 1][j])
-			{
-				currentPos = _table[i - 1][j];
-				update_edits(_initial[i-1], 'd', ' ');
-				i--;
-			}
-			// Check if it was a replace or equal character that got us here
-			// If you put this check above the delete check then you should have a tindall table
-			else
-			{
-				if (currentPos == _table[i - 1][j - 1])
-					_e_map.push(' ');
-				else
-					_e_map.push('r');	
-
-				currentPos = _table[i - 1][j - 1];
-				_e_initial.push(_initial[i-1]);
-				_e_final.push(_final[j-1]);
-				i--, j--;
-				
-			}
+			currentPos = _table[i - 1][j - 1];
+			update_edits(_initial[i - 1], 'r', _final[j - 1]);
+			i--, j--;
+		}
+		/*
+			If we can go left and it is better than our current position
+			then an insert operation is the best choice.
+		*/
+		else if ((j > 0) && (currentPos > _table[i][j - 1]))
+		{
+			currentPos = _table[i][j - 1];
+			update_edits(' ', 'i', _final[j-1]);
+			j--;
+		}
+		/*
+			As long as we can go up and it is better than our current position
+			then a delete operation is the best choice.
+		*/
+		else if ((i > 0) && (currentPos > _table[i - 1][j]))
+		{
+			currentPos = _table[i - 1][j];
+			update_edits(_initial[i-1], 'd', ' ');
+			i--;
+		}
+		/*
+			If we can go diagnol, nothing else matches, and our currentPos
+			is equal to the diagnol then we will navigate up the diagnol since
+			no change was made.
+		*/
+		else if((i > 0 && j > 0) && (currentPos == _table[i - 1][j - 1]))
+		{
+			currentPos = _table[i - 1][j - 1];
+			update_edits(_initial[i - 1], ' ', _final[j - 1]);
+			i--, j--;
 		}
 	}
 
@@ -102,9 +116,6 @@ void EditDistanceAlgo::PrintResults(bool table)
 	std::cout << std::endl;
 
 	std::cout << "Minimum edits required to change initial to final: " << _table[_initial.size()][_final.size()] << std::endl;
-
-
-	
 }
 
 void EditDistanceAlgo::Run()

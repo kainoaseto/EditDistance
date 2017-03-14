@@ -1,8 +1,9 @@
 #include "pch.h"
 #include "EditDistanceAlgo.h"
 
-int main()
+int main(int arc, char* argv[])
 {
+	bool printTable = false;
 	std::string initial, final;
 
 	std::cout << "===================================================================================================" << std::endl;
@@ -17,8 +18,11 @@ int main()
 
     EditDistanceAlgo dpAlgo(initial, final);
     
+	if (std::string(argv[1]) == "table")
+		printTable = true;
+
 	dpAlgo.Run();
-    dpAlgo.PrintResults(true);
+    dpAlgo.PrintResults(printTable);
 
     return 0;
 }
