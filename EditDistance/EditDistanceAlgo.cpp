@@ -35,7 +35,7 @@ void EditDistanceAlgo::PrintResults(bool table)
 				else if (i == 1)
 					std::cout << std::setw(offset) << _final[j] << " ";
 				else
-					std::cout << std::setw(offset) << "- ";
+					std::cout << std::setw(offset) << "-" << " ";
 			}
 			if(i < 3)
 				std::cout << std::endl;
