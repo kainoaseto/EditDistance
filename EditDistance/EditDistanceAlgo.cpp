@@ -14,20 +14,26 @@ void EditDistanceAlgo::PrintResults(bool table)
 {
     if(table)
     {
-        // To be fair this is TERRIBLE in performance but for our small use case
-        // this will get a dynamic offset for us. A lookup table would be best
+        /*
+			To be fair this is TERRIBLE in performance but for our small use case
+            this will get a dynamic offset for us. A lookup table would be best
+		*/
         int offset = static_cast<int>(std::to_string(_initial.size()).size());
+
+		/*
+			Prints out the formatted table
+		*/
         for(int i = 0; i < 3; i++)
         {
 			std::cout << std::string(offset + 5, ' ');
 			for (int j = 0; j <= _final.size(); j++)
 			{
 				if (i == 0)
-					std::cout << j << " ";
+					std::cout << std::setw(offset) << j << " ";
 				else if (i == 1)
-					std::cout << _final[j] << " ";
+					std::cout << std::setw(offset) << _final[j] << " ";
 				else
-					std::cout << "- ";
+					std::cout << std::setw(offset) << "- ";
 			}
 			if(i < 3)
 				std::cout << std::endl;
@@ -41,7 +47,7 @@ void EditDistanceAlgo::PrintResults(bool table)
 
             for(int j = 0; j <= _final.size(); j++)
             {
-                std::cout << _table[i][j] << " ";
+                std::cout << std::setw(offset) <<  _table[i][j] << " ";
             }
         }
 		std::cout << std::endl;
@@ -67,7 +73,8 @@ void EditDistanceAlgo::PrintResults(bool table)
 				update_edits(_initial[i-1], 'd', ' ');
 				i--;
 			}
-			// Check if a replace was the best choice
+			// Check if it was a replace or equal character that got us here
+			// If you put this check above the delete check then you should have a tindall table
 			else
 			{
 				if (currentPos == _table[i - 1][j - 1])
@@ -86,10 +93,16 @@ void EditDistanceAlgo::PrintResults(bool table)
 
 	std::cout << "From: ";
 	stack_print(_e_initial);
+	std::cout << std::endl;
 	std::cout << " map: ";
 	stack_print(_e_map);
+	std::cout << "    : (i)insertions, (d)eletions, (r)eplacements" << std::endl;
 	std::cout << "  To: ";
 	stack_print(_e_final);
+	std::cout << std::endl;
+
+	std::cout << "Minimum edits required to change initial to final: " << _table[_initial.size()][_final.size()] << std::endl;
+
 
 	
 }
@@ -150,5 +163,4 @@ void EditDistanceAlgo::stack_print(std::stack<char> cstack)
 		std::cout << cstack.top();
 		cstack.pop();
 	}
-	std::cout << std::endl;
 }
