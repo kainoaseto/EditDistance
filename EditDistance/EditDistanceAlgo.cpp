@@ -8,6 +8,8 @@ EditDistanceAlgo::EditDistanceAlgo(std::string initial, std::string final)
 {
     _initial = initial;
     _final = final;
+	_dp_str_compares = 0;
+	_recur_str_compares = 0;
 }
 
 void EditDistanceAlgo::PrintResults(bool table)
@@ -115,7 +117,13 @@ void EditDistanceAlgo::PrintResults(bool table)
 	stack_print(_e_final);
 	std::cout << std::endl;
 
-	std::cout << "Minimum edits required to change initial to final: " << _table[_initial.size()][_final.size()] << std::endl;
+	std::cout << "Minimum edits required to change initial to final via DP: " << _table[_initial.size()][_final.size()] << std::endl;
+	std::cout << "Minimum character comparisons to change via DP: " << _dp_str_compares << std::endl;
+	std::cout << std::endl;
+
+	int recursiveCount = Recursive(_initial, _final, _initial.size(), _final.size());
+	std::cout << "Minimum edits required to change initial to final via Recursion: " << recursiveCount << std::endl;
+	std::cout << "Minimum character comparisons to change via Recursion: " << _recur_str_compares << std::endl;
 }
 
 void EditDistanceAlgo::Run()
@@ -136,7 +144,7 @@ void EditDistanceAlgo::Run()
              * If the last characters were the same then just use the same count
              * from before without incrementing
              */
-            else if(_initial[i-1] == _final[j-1])
+            else if(_initial[i-1] == _final[j-1] && ++_dp_str_compares)
                 _table[i][j] = _table[i-1][j-1];
 
             /*
@@ -153,6 +161,28 @@ void EditDistanceAlgo::Run()
         }
     }
 
+}
+
+/*
+	Calculate the min edit distance via Recursive calls
+*/
+int EditDistanceAlgo::Recursive(std::string initial, std::string final, int initialSz, int finalSz)
+{
+	// If initialSz is 0 then we have reached the end or the string is empty so everything needs to be inserted.
+	if (initialSz == 0) return finalSz;
+	// If finalSz is 0 then we have reached the end of the string is empty so everything need to be removed from the first string.
+	if (finalSz == 0) return initialSz;
+
+	// If the characters are the same then continue on without increasing the count
+	_recur_str_compares++;
+	if (initial[initialSz - 1] == final[finalSz - 1])
+		return Recursive(initial, final, initialSz - 1, finalSz - 1);
+
+	return 1 + min(
+		Recursive(initial, final, initialSz, finalSz - 1),		// Insert
+		Recursive(initial, final, initialSz - 1, finalSz),		// Remove
+		Recursive(initial, final, initialSz - 1, finalSz - 1)	// Replace
+	);
 }
 
 int EditDistanceAlgo::min(int x, int y, int z)

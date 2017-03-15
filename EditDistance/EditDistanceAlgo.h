@@ -13,9 +13,13 @@ public:
     EditDistanceAlgo(std::string initial, std::string final);
     ~EditDistanceAlgo() {};
 
+	// Print table and backtrace through it to find the shortest path and results
     void PrintResults(bool table);
 
+	// Fill the DP table
     void Run();
+
+	int Recursive(std::string initial, std::string final, int initialSz, int finalSz);
 
 private:
 	void update_edits(char cinitial, char cmap, char cfinal);
@@ -33,6 +37,9 @@ private:
 
     // DP cache table
     int _table[50][50];
+
+	int _dp_str_compares;
+	int _recur_str_compares;
 
 };
 
