@@ -10,7 +10,7 @@
 #include "pch.h"
 #include "EditDistanceAlgo.h"
 
-int main(int arc, char* argv[])
+int main(int argc, char* argv[])
 {
 	bool printTable = false;
 	std::string initial, final;
@@ -26,9 +26,11 @@ int main(int arc, char* argv[])
 	getline(std::cin, final);
 
     EditDistanceAlgo dpAlgo(initial, final);
-    
-	if (std::string(argv[1]) == "table")
-		printTable = true;
+	if (argc > 1)
+	{
+		if (std::string(argv[1]) == "table")
+			printTable = true;
+	}
 
 	dpAlgo.Run();
     dpAlgo.PrintResults(printTable);
