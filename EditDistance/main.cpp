@@ -1,3 +1,12 @@
+/*
+	Kainoa Seto
+	Edit Distance Algorithm
+	Recursive and Dynamic Programming approaches called on two strings inputted
+	by the user.
+	3-14-17
+	Main.cpp
+*/
+
 #include "pch.h"
 #include "EditDistanceAlgo.h"
 

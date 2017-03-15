@@ -1,6 +1,11 @@
-//
-// Created by Kainoa Seto on 3/13/17.
-//
+/*
+	Kainoa Seto
+	Edit Distance Algorithm
+	Recursive and Dynamic Programming approaches called on two strings inputted
+	by the user.
+	3-14-17
+	EditDistanceAlgo.cpp
+*/
 
 #include "EditDistanceAlgo.h"
 
@@ -144,9 +149,11 @@ void EditDistanceAlgo::Run()
              * If the last characters were the same then just use the same count
              * from before without incrementing
              */
-            else if(_initial[i-1] == _final[j-1] && ++_dp_str_compares)
-                _table[i][j] = _table[i-1][j-1];
-
+			else if (_initial[i - 1] == _final[j - 1])
+			{
+				_table[i][j] = _table[i - 1][j - 1];
+				++_dp_str_compares;
+			}
             /*
              * If they aren't the same or empty then add one op to the total
              * of the minimum operation and continue.
@@ -157,10 +164,10 @@ void EditDistanceAlgo::Run()
                         _table[i-1][j],  // Delete
                         _table[i-1][j-1] // Replace
                 );
+				++_dp_str_compares;
             }
         }
     }
-
 }
 
 /*
@@ -178,6 +185,7 @@ int EditDistanceAlgo::Recursive(std::string initial, std::string final, int init
 	if (initial[initialSz - 1] == final[finalSz - 1])
 		return Recursive(initial, final, initialSz - 1, finalSz - 1);
 
+	// Recurse through the strings and count up the shortest path from operations
 	return 1 + min(
 		Recursive(initial, final, initialSz, finalSz - 1),		// Insert
 		Recursive(initial, final, initialSz - 1, finalSz),		// Remove
